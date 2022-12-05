@@ -8,6 +8,7 @@ flask = "*"
 black = "*"
 typing = "*"
 flask-restx = "*"
+google-auth = "*"
 
 [dev-packages]
 
