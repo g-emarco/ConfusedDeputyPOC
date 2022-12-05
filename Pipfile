@@ -9,6 +9,7 @@ black = "*"
 typing = "*"
 flask-restx = "*"
 google-auth = "*"
+gunicorn = "*"
 
 [dev-packages]
 
