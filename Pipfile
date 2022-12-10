@@ -10,6 +10,9 @@ typing = "*"
 flask-restx = "*"
 google-auth = "*"
 gunicorn = "*"
+google-cloud-storage = "*"
+google-cloud-recommender = "*"
+google-api-python-client = "*"
 
 [dev-packages]
 
