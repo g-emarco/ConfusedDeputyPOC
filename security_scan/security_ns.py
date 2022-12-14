@@ -13,7 +13,7 @@ recommendations_ns = Namespace("recommendations")
 class RecommendationIDEndpoint(Resource):
     def get(self, target_sa: str):
         source_credentials, project = google.auth.default()
-        target_scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+        target_scopes = []
 
         target_credentials = impersonated_credentials.Credentials(
             source_credentials=source_credentials,
