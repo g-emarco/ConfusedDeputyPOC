@@ -16,32 +16,35 @@ A project that exposes two endpoints to demonstrate cross organizational service
 
 1. Config Google Cloud project
 
-    `gcloud config set project customer1`
+    ```bash
+    gcloud projects create $customer_project_id --name=$customer_project_id
+   gcloud config set project $customer_project_id
+   ```
 
 2. create scanner service account with  to be impersonated
 
-    `gcloud iam service-accounts create cool-security-scanner-sa
-`
+    `gcloud iam service-accounts create $customer_cool_security_sa_name`
 
 3. Attach relevant permissions to the scanner service account
     ```bash
-    gcloud projects add-iam-policy-binding customer1 --member
-    "serviceAccount:cool-security-scanner-sa@customer1.iam.gserviceaccount.com" --role
-    "role/storastoragege.objectViewer"
+   gcloud iam roles create BucketLister --project $customer_project_id --permissions storage.buckets.list
+   gcloud projects add-iam-policy-binding $customer_project_id \
+    --member serviceAccount:$customer_cool_security_sa_name@$customer_project_id.iam.gserviceaccount.com \
+     --role "roles/$customer_project_id/BucketLister"
     
-    gcloud projects add-iam-policy-binding customer1 --member
-    "serviceAccount:cool-security-production-sa@cool-security-account.iam.gserviceaccount.com" --role
-    "role/iam.serviceAccountTokenCreator" --service-account "cool-security-scanner-sa@customer1.iam.gserviceaccount.com"
+   gcloud iam service-accounts add-iam-policy-binding $customer_cool_security_sa_name@$customer_project_id.iam.gserviceaccount.com \
+   --member serviceAccount:$cool_security_production_sa \
+   --role "roles/iam.serviceAccountTokenCreator"
     ```
 
 where:
 
- `customer1` is your target project name
+ `customer_project_id` is your target project name
 
 
-`cool-security-scanner-sa` is the service account created in the customer1 project to be the deputy of cool-security
+`customer_cool_security_sa_name` is the service account created in the customer_project_id project to be the deputy of cool-security
 
-`cool-security-production-sa@cool-security-account.iam.gserviceaccount.com` is the production service account of cool-security that has only TokenCreator Permission
+`cool_security_production_sa` is the production service account of cool-security that has only TokenCreator Permission
 ## API Reference
 
 #### Onboarding a customer
@@ -53,18 +56,20 @@ where:
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
 | `organization_name` | `string` | **Required**. The organization name |
-| `organizservice_account_emailation_name` | `string` | **Required**. The email of the service account created on the tenant's project that would be impersonated in the future |
+| `service_account_email` | `string` | **Required**. The email of the service account created on the tenant's project that would be impersonated in the future |
 
 
 #### Start security scanning (impersonating the taret service account)
 
 ```http
-  GET /api/recommendations/${target_service_account_email}
+  POST /api/recommendations/${target_service_account_email}
 ```
 
-| Parameter | Type     | Description                       |
-| :-------- | :------- | :-------------------------------- |
-| `target_service_account_email`      | `string` | **Required**. Target service account the would be inpersonated |
+| Parameter        | Type     | Description                                                    |
+|:-----------------| :------- |:---------------------------------------------------------------|
+| `target_sa`      | `string` | **Required**. Target service account the would be inpersonated |
+| `target_project` | `string` | **Required**. Target project                                   |
+
 
 
 ## Run Server

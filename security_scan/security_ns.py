@@ -1,28 +1,28 @@
 from flask_restx import Resource, Namespace
+from flask import request
 import google.auth
 from google.cloud import storage
 from google.auth import impersonated_credentials
-from google.cloud import recommender_v1
-from google.oauth2 import service_account
-import googleapiclient.discovery
 
 recommendations_ns = Namespace("recommendations")
 
 
-@recommendations_ns.route("/<string:target_sa>")
+@recommendations_ns.route("/")
 class RecommendationIDEndpoint(Resource):
-    def get(self, target_sa: str):
+    def post(self):
+        payload = request.json
+        target_sa = payload.get("target_sa")
+        target_project = payload.get("target_project")
+
         source_credentials, project = google.auth.default()
-        target_scopes = []
 
         target_credentials = impersonated_credentials.Credentials(
             source_credentials=source_credentials,
             target_principal=target_sa,
-            target_scopes=target_scopes,
+            target_scopes=[],
             lifetime=500,
         )
 
-        target_project = "django-serverless-poc"
         client = storage.Client(credentials=target_credentials)
         buckets = client.list_buckets(project=target_project)
 
