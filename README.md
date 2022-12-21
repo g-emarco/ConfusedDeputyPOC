@@ -30,7 +30,7 @@ A project that exposes two endpoints to demonstrate cross organizational service
    gcloud iam roles create BucketLister --project $customer_project_id --permissions storage.buckets.list
    gcloud projects add-iam-policy-binding $customer_project_id \
     --member serviceAccount:$customer_cool_security_sa_name@$customer_project_id.iam.gserviceaccount.com \
-     --role "roles/$customer_project_id/BucketLister"
+     --role "projects/$customer_project_id/roles/BucketLister"
     
    gcloud iam service-accounts add-iam-policy-binding $customer_cool_security_sa_name@$customer_project_id.iam.gserviceaccount.com \
    --member serviceAccount:$cool_security_production_sa \
