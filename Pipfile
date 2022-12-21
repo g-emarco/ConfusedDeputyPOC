@@ -13,6 +13,8 @@ gunicorn = "*"
 google-cloud-storage = "*"
 google-cloud-recommender = "*"
 google-api-python-client = "*"
+google-cloud-iam = "*"
+google-auth-httplib2 = "*"
 
 [dev-packages]
 
