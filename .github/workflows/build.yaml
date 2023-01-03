@@ -1,0 +1,43 @@
+on:
+  push:
+      branches: [ main ]
+
+name: Build and Deploy
+env:
+  PROJECT_ID: "oidc-demo-373615"
+  PROJECT_NUMBER: "172014898938"
+  REGION: "us-east1"
+  SERVICE_ACCOUNT: "github-image-pusher-sa@oidc-demo-373615.iam.gserviceaccount.com"
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    # outputs:
+    #   output1: ${{ steps.auth.outputs.create_credentials_file }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Configure Workload Identity Federation and generate an access token.
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        workload_identity_provider: 'projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+        service_account: ${{ env.SERVICE_ACCOUNT }}
+
+    # Setup gcloud CLI
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+
+    # Build and Push Container
+    - name: Build and Push Container
+      run: |-
+        gcloud auth list
+        docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:latest .
+        docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:latest
