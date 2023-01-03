@@ -36,7 +36,5 @@ jobs:
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
         gcloud auth list
-        docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:latest .
-        docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:latest
-
-#        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+        docker build . -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/api:latest
+        docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/api:latest
