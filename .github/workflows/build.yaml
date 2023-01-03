@@ -31,10 +31,13 @@ jobs:
         workload_identity_provider: projects/172014898938/locations/global/workloadIdentityPools/github-pool2/providers/github-provider2
         service_account: workflows-sa@oidc-demo-373615.iam.gserviceaccount.com
 
+    # Setup gcloud CLI
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
+
     # Build and Push Container
     - name: Build and Push Container to artifact registry
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
         gcloud auth list
-        docker build . -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/api:latest
-        docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/api:latest
+        gcloud builds submit ./cool-security-api/ --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:${{  github.sha }} --project oidc-demo-373615 
