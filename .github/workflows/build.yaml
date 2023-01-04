@@ -45,7 +45,7 @@ jobs:
         registry: '${{ env.REGION }}-docker.pkg.dev'
 
 
-        # Build and Push Container
+    # Build and Push Container
     - name: Build and Push Container to artifact registry
       run: |-
         gcloud auth list
