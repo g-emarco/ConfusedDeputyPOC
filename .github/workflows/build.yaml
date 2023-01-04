@@ -35,7 +35,7 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
-    # Authenticate docker to Artifact registry.
+    # Authenticate docker to Artifact registry..
     - id: 'docker-auth'
       name: 'Authenticate Docker to Artifact registry'
       uses: 'docker/login-action@v2'
