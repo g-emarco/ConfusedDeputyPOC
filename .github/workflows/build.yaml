@@ -28,6 +28,7 @@ jobs:
       uses: 'google-github-actions/auth@v0.3.1'
       with:
         create_credentials_file: 'true'
+        token_format: 'access_token'
         workload_identity_provider: projects/172014898938/locations/global/workloadIdentityPools/github-pool2/providers/github-provider2
         service_account: workflows-sa@oidc-demo-373615.iam.gserviceaccount.com
 
@@ -35,9 +36,20 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
 
-    # Build and Push Container
+    # Authenticate docker to Artifact registry.
+    - id: 'docker-auth'
+      name: 'Authenticate Docker to Artifact registry'
+      uses: 'docker/login-action@v2'
+      with:
+        username: oauth2accesstoken
+        password: ${{ steps.auth.outputs.access_token }}
+        registry: ${{ env.REGION }}-docker.pkg.dev
+
+
+        # Build and Push Container
     - name: Build and Push Container to artifact registry
       run: |-
         gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
         gcloud auth list
-        gcloud builds submit ./cool-security-api/ --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:${{  github.sha }} --project oidc-demo-373615 
+        docker build . -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:latest
+        docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/cool-security-api/cool-api:latest
