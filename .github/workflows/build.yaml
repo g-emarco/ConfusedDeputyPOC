@@ -28,7 +28,6 @@ jobs:
       uses: 'google-github-actions/auth@v0.3.1'
       with:
         create_credentials_file: 'true'
-        token_format: 'access_token'
         workload_identity_provider: projects/172014898938/locations/global/workloadIdentityPools/github-pool2/providers/github-provider2
         service_account: workflows-sa@oidc-demo-373615.iam.gserviceaccount.com
 
@@ -36,14 +35,14 @@ jobs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0
 
-    # Authenticate docker to Artifact registry.
-    - id: 'docker-auth'
-      name: 'Authenticate Docker to Artifact registry'
-      uses: 'docker/login-action@v2'
-      with:
-        username: oauth2accesstoken
-        password: ${{ steps.auth.outputs.access_token }}
-        registry: ${{ env.REGION }}-docker.pkg.dev
+#    # Authenticate docker to Artifact registry.
+#    - id: 'docker-auth'
+#      name: 'Authenticate Docker to Artifact registry'
+#      uses: 'docker/login-action@v2'
+#      with:
+#        username: oauth2accesstoken
+#        password: ${{ steps.auth.outputs.access_token }}
+#        registry: '${{ env.REGION }}-docker.pkg.dev'
 
 
         # Build and Push Container
