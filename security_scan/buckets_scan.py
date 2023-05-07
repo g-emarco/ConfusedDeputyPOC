@@ -67,3 +67,22 @@ def get_buckets_by_safe_impersonation(
     client = storage.Client(credentials=dynamic_deputy_credentials)
     buckets = client.list_buckets(project=target_project)
     return buckets
+
+
+def list_buckets_via_deputy_impersonation(
+    deputy_sa: str, target_sa: str, target_project: str
+):
+    source_credentials, project = google.auth.default()
+    target_credentials = impersonated_credentials.Credentials(
+        source_credentials=source_credentials,
+        target_principal=target_sa,
+        target_scopes=[],
+        delegates=[
+            f"projects/-/serviceAccounts/{deputy_sa}",
+        ],
+        lifetime=500,
+    )
+
+    client = storage.Client(credentials=target_credentials)
+    buckets = client.list_buckets(project=target_project)
+    return buckets
